@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crédito Izaque">
+<title>Crédito Pessoal Izaque Froes</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--surface:#0f1420;--card:#141c2e;--border:#1e2a42;
+  --gold:#c9a84c;--gold2:#e8c96a;--blue:#4a90ff;--red:#ff4757;
+  --green:#2ecc71;--orange:#ff6b35;--text:#eef2ff;--muted:#6b7ea3;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+
+/* ── GLOW BG ── */
+body::before{content:'';position:fixed;top:-100px;right:-100px;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(201,168,76,.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+/* ══ TELA LOGIN ══ */
+#loginScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{width:100%;max-width:380px;background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:44px 36px;box-shadow:0 32px 80px rgba(0,0,0,.7);position:relative;overflow:hidden;}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));}
+.login-seal{width:70px;height:70px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#8a6a20);
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  margin:0 auto 14px;box-shadow:0 8px 24px rgba(201,168,76,.35);}
+.login-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;text-align:center;line-height:1.25;margin-bottom:4px;}
+.login-title span{color:var(--gold);}
+.login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:28px;}
+.lf{margin-bottom:14px;}
+.lf label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.lf input{width:100%;padding:13px 15px;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;}
+.lf input:focus{border-color:var(--gold);}
+.login-err{color:var(--red);font-size:13px;text-align:center;margin-bottom:10px;display:none;}
+.btn-lg{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a07830);border:none;border-radius:10px;
+  color:#07090f;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+.btn-lg:active{transform:scale(.98);}
+.login-footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;}
+
+/* ══ APP ══ */
+#appContent{display:none;min-height:100vh;padding-bottom:80px;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+  border-bottom:1px solid var(--border);background:rgba(7,9,15,.95);
+  backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;}
+.logo .l1{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--gold);}
+.logo .l2{font-size:10px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6a20);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#07090f;}
+.btn-sair{padding:6px 12px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:12px;cursor:pointer;}
+
+/* BOTTOM TABS */
+.bottom-tabs{position:fixed;bottom:0;left:0;right:0;z-index:99;
+  display:flex;background:rgba(10,14,26,.97);border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);}
+.btab{flex:1;padding:10px 4px 12px;border:none;background:transparent;
+  color:var(--muted);font-size:10px;font-family:'DM Sans',sans-serif;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;
+  transition:color .2s;}
+.btab .bico{font-size:20px;}
+.btab.active{color:var(--gold);}
+
+/* PAGES */
+.page{display:none;padding:16px;max-width:800px;margin:0 auto;}
+.page.active{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px;}
+.card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;}
+.badge{background:rgba(201,168,76,.15);color:var(--gold);font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;}
+.badge-red{background:rgba(255,71,87,.15);color:var(--red);}
+.badge-green{background:rgba(46,204,113,.15);color:var(--green);}
+
+/* FORM */
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;}
+.fg input,.fg select{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+.fg input:focus,.fg select:focus{border-color:var(--gold);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* RANGE */
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;background:var(--border);border-radius:3px;padding:0;border:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 0 0 4px rgba(201,168,76,.2);}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* BTN */
+.btn{padding:11px 22px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--gold),#a07830);color:#07090f;width:100%;justify-content:center;}
+.btn-green{background:linear-gradient(135deg,var(--green),#1a9950);color:#fff;width:100%;justify-content:center;}
+.btn-red{background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;width:100%;justify-content:center;}
+.btn-blue{background:linear-gradient(135deg,var(--blue),#2471d9);color:#fff;width:100%;justify-content:center;}
+.btn-out{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-out:hover{border-color:var(--gold);color:var(--gold);}
+
+/* RESULT GRID */
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.ri{background:var(--surface);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--border);}
+.ri .rl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.ri .rv{font-size:20px;font-weight:700;font-family:'Syne',sans-serif;color:var(--gold);}
+.ri .rv.b{color:var(--blue);}
+.ri .rv.r{color:var(--orange);}
+
+/* PROGRESS */
+.pb-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.pb-track{background:var(--border);border-radius:4px;height:8px;}
+.pb-fill{height:8px;border-radius:4px;background:linear-gradient(90deg,#8a6a20,var(--gold));transition:width .6s;}
+
+/* PARCELA ITEM */
+.pi{display:flex;align-items:center;padding:12px;border-bottom:1px solid rgba(30,42,66,.5);gap:10px;}
+.pi:last-child{border-bottom:none;}
+.pi .pnum{font-weight:700;font-size:16px;font-family:'Syne',sans-serif;min-width:28px;text-align:center;}
+.pi .pinfo{flex:1;}
+.pi .pdate{font-size:12px;color:var(--muted);}
+.pi .pval{font-size:15px;font-weight:600;}
+.pi .pstatus{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;}
+.s-pago{background:rgba(46,204,113,.15);color:var(--green);}
+.s-vencer{background:rgba(255,107,53,.2);color:var(--orange);}
+.s-atrasado{background:rgba(255,71,87,.15);color:var(--red);}
+.s-futuro{background:rgba(107,126,163,.1);color:var(--muted);}
+.pi .pbaixa{padding:6px 12px;border-radius:8px;border:none;background:rgba(46,204,113,.15);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;}
+.pi.pago-row{opacity:.6;}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--card);border:1px solid var(--gold);color:var(--text);
+  padding:12px 20px;border-radius:12px;font-size:14px;z-index:9999;
+  opacity:0;transition:all .3s;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.err{border-color:var(--red);}
+.toast.ok{border-color:var(--green);}
+.toast.warn{border-color:var(--orange);}
+.toast.vip{border-color:var(--gold);background:linear-gradient(135deg,#141c2e,#1e2a3e);font-weight:700;}
+
+/* VIP BADGE */
+.vip-badge{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f;
+  font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.5px;}
+
+/* CLIENTE CARD */
+.cc{display:flex;align-items:center;gap:12px;background:rgba(201,168,76,.06);
+  border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:14px;margin-bottom:14px;}
+.cc .ca{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6a20);
+  display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#07090f;flex-shrink:0;}
+.cc .ci .cn{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.cc .ci .cc2{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9000;display:none;align-items:flex-end;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:20px 20px 0 0;
+  width:100%;max-width:800px;max-height:92vh;overflow-y:auto;padding:24px 20px 36px;}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
+
+/* CONTRATO */
+.contrato-wrap{background:#fff;color:#000;padding:32px;border-radius:12px;font-family:Arial,sans-serif;font-size:13px;line-height:1.7;}
+.contrato-wrap h2{text-align:center;font-size:18px;margin-bottom:4px;color:#8a6a20;}
+.contrato-wrap .csub{text-align:center;font-size:12px;color:#666;margin-bottom:20px;border-bottom:2px solid #c9a84c;padding-bottom:12px;}
+.contrato-wrap table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+.contrato-wrap td{padding:7px 10px;border:1px solid #ddd;font-size:13px;}
+.contrato-wrap td:first-child{font-weight:bold;background:#fafafa;width:45%;}
+.contrato-wrap .clausulas{font-size:12px;color:#444;margin-bottom:16px;}
+.contrato-wrap .clausulas p{margin-bottom:6px;}
+.assinatura-area{margin-top:24px;padding-top:24px;border-top:2px dashed #ccc;}
+.assinatura-linha{border-bottom:1px solid #000;width:70%;margin:32px auto 6px;}
+.assinatura-label{text-align:center;font-size:12px;color:#666;}
+
+/* CLIENTES LIST */
+.cli-item{display:flex;align-items:center;justify-content:space-between;
+  padding:14px;border-bottom:1px solid rgba(30,42,66,.5);gap:10px;}
+.cli-item:last-child{border-bottom:none;}
+.cli-item .cname{font-weight:600;font-size:14px;}
+.cli-item .cinfo{font-size:12px;color:var(--muted);}
+.cli-item .cval{font-weight:700;color:var(--gold);font-size:14px;text-align:right;}
+.cli-item .cstatus{font-size:11px;padding:3px 7px;border-radius:20px;}
+.alertas-wrap{margin-bottom:14px;}
+.alerta{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;margin-bottom:8px;}
+.alerta-red{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);}
+.alerta-orange{background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);}
+.alerta-gold{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);}
+
+@media(min-width:600px){.g2{grid-template-columns:1fr 1fr;}}
+@media(max-width:380px){.rg{grid-template-columns:1fr 1fr;}.ri .rv{font-size:17px;}}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-seal">💰</div>
+    <div class="login-title">Crédito Pessoal<br><span>Izaque Froes</span></div>
+    <div class="login-sub">🔒 Acesso exclusivo do administrador</div>
+    <div class="lf"><label>Usuário</label><input type="text" id="lgU" placeholder="Usuário" autocomplete="off"></div>
+    <div class="lf"><label>Senha</label><input type="password" id="lgS" placeholder="••••••••"></div>
+    <div class="login-err" id="lgErr">❌ Usuário ou senha incorretos</div>
+    <button class="btn-lg" onclick="login()">ENTRAR</button>
+    <div class="login-footer">Sistema privado · Izaque Froes</div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="appContent">
+
+<nav>
+  <div class="logo">
+    <div class="l1">Crédito Pessoal</div>
+    <div class="l2">Izaque Froes</div>
+  </div>
+  <div class="nav-r">
+    <div class="ava">L</div>
+    <span style="font-size:13px;color:var(--gold);font-weight:600;">Corretor</span>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+</nav>
+
+<!-- PÁGINAS -->
+<div class="page active" id="page-sim">
+  <div class="card">
+    <div class="card-title">👤 Dados do Cliente</div>
+    <div class="g2">
+      <div class="fg"><label>Nome completo</label><input type="text" id="cNome" placeholder="Nome do cliente" oninput="atualizarCC()"></div>
+      <div class="fg"><label>CPF</label><input type="text" id="cCpf" placeholder="000.000.000-00" oninput="mascaraCPF(this);atualizarCC()"></div>
+    </div>
+    <div id="cliCard" style="display:none;" class="cc">
+      <div class="ca" id="cliAva">?</div>
+      <div class="ci">
+        <div class="cn" id="cliN">—</div>
+        <div class="cc2" id="cliC">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Simulador <span class="badge">PRICE</span></div>
+    <div class="fg"><label>Valor: <strong style="color:var(--gold)" id="lblV">R$ 5.000,00</strong></label>
+      <input type="range" id="rV" min="500" max="50000" step="500" value="5000" oninput="simular()">
+      <div class="range-labels"><span>R$500</span><span>R$50k</span></div>
+    </div>
+    <div class="fg"><label>Prazo: <strong style="color:var(--gold)" id="lblP">12 meses</strong></label>
+      <input type="range" id="rP" min="3" max="60" step="3" value="12" oninput="simular()">
+      <div class="range-labels"><span>3x</span><span>60x</span></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Taxa mensal (%)</label><input type="number" id="rT" value="2.5" step="0.1" min="0.1" oninput="simular()"></div>
+      <div class="fg"><label>Finalidade</label>
+        <select><option>Quitação de dívidas</option><option>Reforma</option><option>Educação</option><option>Saúde</option><option>Veículo</option><option>Outros</option></select>
+      </div>
+    </div>
+    <div class="rg">
+      <div class="ri"><div class="rl">Parcela</div><div class="rv" id="rParcela">—</div></div>
+      <div class="ri"><div class="rl">Total a pagar</div><div class="rv r" id="rTotal">—</div></div>
+      <div class="ri"><div class="rl">Total juros</div><div class="rv b" id="rJuros">—</div></div>
+      <div class="ri"><div class="rl">CET anual</div><div class="rv" id="rCet">—</div></div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-out" onclick="abrirContrato()" style="flex:1;">📄 Gerar contrato</button>
+      <button class="btn btn-primary" onclick="goTab('sol')" style="flex:2;">Registrar →</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📈 Evolução do saldo devedor</div>
+    <canvas id="chart" height="140"></canvas>
+  </div>
+</div>
+
+<!-- PARCELAS -->
+<div class="page" id="page-par">
+  <div id="alertasWrap" class="alertas-wrap"></div>
+  <div class="card">
+    <div class="card-title">🔍 Buscar cliente</div>
+    <div class="fg"><input type="text" id="busca" placeholder="Digite nome ou CPF..." oninput="buscarCliente()"></div>
+    <div id="listaBusca"></div>
+  </div>
+  <div id="parConteudo" style="display:none;">
+    <div class="card">
+      <div class="card-title" id="parTitulo">Parcelas</div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div><div style="font-size:11px;color:var(--muted);">Valor financiado</div><div style="font-size:18px;font-weight:700;color:var(--gold);" id="parValor">—</div></div>
+        <div><div style="font-size:11px;color:var(--muted);">Próx. vencimento</div><div style="font-size:16px;font-weight:700;color:var(--orange);" id="parProx">—</div></div>
+      </div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div><div style="font-size:11px;color:var(--muted);">Parcelas pagas</div><div style="font-size:18px;font-weight:700;color:var(--green);" id="parPagas">0</div></div>
+        <div><div style="font-size:11px;color:var(--muted);">Parcelas faltam</div><div style="font-size:18px;font-weight:700;color:var(--orange);" id="parFaltam">0</div></div>
+      </div>
+      <div class="pb-label"><span>Progresso</span><span id="parPct">0%</span></div>
+      <div class="pb-track"><div class="pb-fill" id="pbF" style="width:0%"></div></div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div id="listaParc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SOLICITAÇÃO -->
+<div class="page" id="page-sol">
+  <div class="card">
+    <div class="card-title">📝 Nova Solicitação</div>
+    <!-- STEP INDICATOR -->
+    <div style="display:flex;align-items:center;margin-bottom:20px;">
+      <div style="flex:1;text-align:center;"><div class="step-c done" id="sc1" style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#07090f;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">1</div><div style="font-size:10px;color:var(--muted);">Dados</div></div>
+      <div style="flex:1;height:1px;background:var(--border);margin-bottom:18px;"></div>
+      <div style="flex:1;text-align:center;"><div id="sc2" style="width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--muted);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">2</div><div style="font-size:10px;color:var(--muted);">Financeiro</div></div>
+      <div style="flex:1;height:1px;background:var(--border);margin-bottom:18px;"></div>
+      <div style="flex:1;text-align:center;"><div id="sc3" style="width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--muted);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">3</div><div style="font-size:10px;color:var(--muted);">Revisão</div></div>
+    </div>
+
+    <div id="st1">
+      <div class="g2">
+        <div class="fg"><label>Nome completo</label><input type="text" id="sN" placeholder="Nome do cliente"></div>
+        <div class="fg"><label>CPF</label><input type="text" id="sC" placeholder="000.000.000-00" oninput="mascaraCPF(this)"></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Nascimento</label><input type="date" id="sD"></div>
+        <div class="fg"><label>Telefone / WhatsApp</label><input type="text" id="sT" placeholder="(00) 00000-0000" oninput="mascaraTel(this)"></div>
+      </div>
+      <div class="fg"><label>E-mail</label><input type="email" id="sE" placeholder="email@dominio.com"></div>
+      <div class="fg"><label>Endereço</label><input type="text" id="sEnd" placeholder="Rua, nº, Bairro, Cidade/UF"></div>
+      <button class="btn btn-primary" onclick="solNext(2)">Próximo →</button>
+    </div>
+
+    <div id="st2" style="display:none;">
+      <div class="g2">
+        <div class="fg"><label>Renda mensal</label><input type="text" id="sR" placeholder="R$ 0,00" oninput="mascaraMoeda(this)"></div>
+        <div class="fg"><label>Vínculo</label>
+          <select id="sV"><option>CLT</option><option>MEI / Autônomo</option><option>Servidor Público</option><option>Aposentado</option><option>Outros</option></select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Valor solicitado</label><input type="text" id="sVal" placeholder="R$ 0,00" oninput="mascaraMoeda(this)"></div>
+        <div class="fg"><label>Prazo</label>
+          <select id="sPr"><option>6</option><option value="12" selected>12</option><option>18</option><option>24</option><option>36</option><option>48</option><option>60</option></select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label>Taxa (%/mês)</label><input type="number" id="sTx" value="2.5" step="0.1" min="0.1"></div>
+        <div class="fg"><label>Finalidade</label>
+          <select id="sFin"><option>Quitação</option><option>Reforma</option><option>Educação</option><option>Saúde</option><option>Veículo</option><option>Outros</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Banco / Conta</label><input type="text" id="sBanco" placeholder="Ex: Caixa — Ag. 0001 / Conta 12345-6"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-out" onclick="solNext(1)" style="flex:1;">← Voltar</button>
+        <button class="btn btn-primary" onclick="solNext(3)" style="flex:2;">Próximo →</button>
+      </div>
+    </div>
+
+    <div id="st3" style="display:none;">
+      <div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:16px;" id="revisao"></div>
+      <div class="fg" style="display:flex;gap:8px;align-items:flex-start;">
+        <input type="checkbox" id="sAc" style="width:auto;margin-top:3px;">
+        <label for="sAc" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;">Confirmo que as informações estão corretas.</label>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-out" onclick="solNext(2)" style="flex:1;">← Voltar</button>
+        <button class="btn btn-primary" onclick="registrar()" style="flex:2;">✅ Registrar</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="solOK" style="display:none;text-align:center;padding:32px;">
+    <div style="font-size:48px;margin-bottom:12px;">✅</div>
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--gold);margin-bottom:6px;">Registrado com sucesso!</div>
+    <div style="color:var(--muted);margin-bottom:16px;" id="solOKdesc">—</div>
+    <button class="btn btn-blue" onclick="goTab('par')">Ver parcelas →</button>
+  </div>
+</div>
+
+<!-- CLIENTES -->
+<div class="page" id="page-cli">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card" style="text-align:center;padding:14px;">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Clientes</div>
+      <div style="font-size:26px;font-weight:700;font-family:'Syne',sans-serif;color:var(--gold);" id="dcT">0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:14px;">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Atrasados</div>
+      <div style="font-size:26px;font-weight:700;font-family:'Syne',sans-serif;color:var(--red);" id="dcA">0</div>
+    </div>
+    <div class="card" style="text-align:center;padding:14px;">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">VIP</div>
+      <div style="font-size:26px;font-weight:700;font-family:'Syne',sans-serif;color:var(--gold2);" id="dcV">0</div>
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:16px 16px 0;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;">👥 Todos os Clientes</div>
+    <div id="listaClientes" style="margin-top:12px;"></div>
+    <div id="semCli" style="text-align:center;padding:32px;color:var(--muted);">Nenhum cliente ainda.</div>
+  </div>
+</div>
+
+<!-- BOTTOM TABS -->
+<div class="bottom-tabs">
+  <button class="btab active" onclick="goTab('sim')"><span class="bico">📊</span>Simulador</button>
+  <button class="btab" onclick="goTab('par')"><span class="bico">📋</span>Parcelas</button>
+  <button class="btab" onclick="goTab('sol')"><span class="bico">📝</span>Solicitar</button>
+  <button class="btab" onclick="goTab('cli')"><span class="bico">👥</span>Clientes</button>
+</div>
+
+</div><!-- /appContent -->
+
+<!-- ══ MODAL CONTRATO ══ -->
+<div class="modal-bg" id="modalContrato">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;">📄 Contrato / Proposta</div>
+      <button class="btn btn-out" onclick="fecharModal('modalContrato')" style="padding:8px 14px;font-size:13px;">Fechar</button>
+    </div>
+    <div class="contrato-wrap" id="contratoHTML"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;">
+      <button class="btn btn-blue" onclick="imprimirContrato()" style="flex:1;">🖨️ Imprimir / PDF</button>
+      <button class="btn btn-green" onclick="compartilharContrato()" style="flex:1;">📤 Compartilhar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL CLIENTE DETALHE ══ -->
+<div class="modal-bg" id="modalCliente">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div id="modalClienteConteudo"></div>
+    <button class="btn btn-out" onclick="fecharModal('modalCliente')" style="width:100%;margin-top:12px;">Fechar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════
+// CREDENCIAIS
+// ══════════════════════════════════
+const CRED = { u:'corretor', s:'Izaque 2478' };
+
+// ══════════════════════════════════
+// ESTADO
+// ══════════════════════════════════
+let clientes = [];
+let clienteSelecionado = null;
+let simV=5000, simP=12, simT=0.025;
+let toastTimer = null;
+let checkTimer = null;
+
+// ══════════════════════════════════
+// AUDIO
+// ══════════════════════════════════
+const ctx_a = new (window.AudioContext || window.webkitAudioContext)();
+
+function bip(tipo) {
+  // tipo: 'ok' | 'alerta' | 'atrasado' | 'vip'
+  const configs = {
+    ok:      [{f:880,d:.1,g:.4},{f:1100,d:.15,g:.4}],
+    alerta:  [{f:440,d:.2,g:.5},{f:330,d:.2,g:.5},{f:440,d:.15,g:.4}],
+    atrasado:[{f:220,d:.3,g:.6},{f:180,d:.4,g:.6},{f:220,d:.3,g:.5}],
+    vip:     [{f:880,d:.1,g:.4},{f:1100,d:.1,g:.4},{f:1320,d:.2,g:.5},{f:1100,d:.1,g:.3},{f:1320,d:.25,g:.5}],
+    baixa:   [{f:660,d:.08,g:.3},{f:880,d:.12,g:.4},{f:1100,d:.18,g:.5}],
+    vencendo:[{f:660,d:.15,g:.5},{f:660,d:.15,g:.5},{f:880,d:.2,g:.5}],
+  };
+  const seq = configs[tipo] || configs.ok;
+  let t = ctx_a.currentTime;
+  seq.forEach(({f,d,g}) => {
+    const o = ctx_a.createOscillator();
+    const ga = ctx_a.createGain();
+    o.connect(ga); ga.connect(ctx_a.destination);
+    o.frequency.value = f;
+    o.type = 'sine';
+    ga.gain.setValueAtTime(g, t);
+    ga.gain.exponentialRampToValueAtTime(.001, t+d);
+    o.start(t); o.stop(t+d);
+    t += d + .03;
+  });
+}
+
+// ══════════════════════════════════
+// LOGIN
+// ══════════════════════════════════
+function login() {
+  const u = document.getElementById('lgU').value.trim();
+  const s = document.getElementById('lgS').value;
+  if (u === CRED.u && s === CRED.s) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    simular();
+    pedirNotificacoes();
+    iniciarChecks();
+  } else {
+    document.getElementById('lgErr').style.display = 'block';
+    document.getElementById('lgS').value = '';
+    bip('atrasado');
+    setTimeout(()=>document.getElementById('lgErr').style.display='none',3000);
+  }
+}
+
+function sair() {
+  clearInterval(checkTimer);
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appContent').style.display = 'none';
+  document.getElementById('lgU').value='';
+  document.getElementById('lgS').value='';
+}
+
+document.getElementById('lgS').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+document.getElementById('lgU').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('lgS').focus();});
+
+// ══════════════════════════════════
+// NOTIFICAÇÕES
+// ══════════════════════════════════
+function pedirNotificacoes() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function notificar(titulo, msg, tipo='') {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('💰 ' + titulo, { body: msg, icon: '' });
+  }
+  showToast(titulo + ' — ' + msg, tipo);
+}
+
+// ══════════════════════════════════
+// CHECK AUTOMÁTICO (a cada 1 min)
+// ══════════════════════════════════
+function iniciarChecks() {
+  verificarAlertas();
+  checkTimer = setInterval(verificarAlertas, 60000);
+}
+
+function verificarAlertas() {
+  const hoje = new Date();
+  const alertasEl = document.getElementById('alertasWrap');
+  alertasEl.innerHTML = '';
+
+  clientes.forEach(c => {
+    const rows = c.rows;
+    rows.forEach(r => {
+      if (r.pago) return;
+      const diff = Math.floor((r.venc - hoje) / 86400000);
+      if (diff < 0 && diff >= -3) {
+        // ATRASADO
+        const a = criarAlerta(`⚠️ PARCELA ATRASADA — ${c.nome}`, `Parcela ${r.num}: ${fmt(r.parcela)} venceu em ${r.venc.toLocaleDateString('pt-BR')}`, 'alerta-red');
+        alertasEl.appendChild(a);
+        bip('atrasado');
+        notificar('Parcela atrasada!', `${c.nome} — Parcela ${r.num}: ${fmt(r.parcela)}`, 'err');
+      } else if (diff === 0) {
+        // VENCE HOJE
+        const a = criarAlerta(`🔔 VENCE HOJE — ${c.nome}`, `Parcela ${r.num}: ${fmt(r.parcela)}`, 'alerta-orange');
+        alertasEl.appendChild(a);
+        bip('vencendo');
+        notificar('Vence hoje!', `${c.nome} — Parcela ${r.num}: ${fmt(r.parcela)}`, 'warn');
+      } else if (diff === 1 || diff === 2) {
+        const a = criarAlerta(`🕐 VENCE EM ${diff} DIA(S) — ${c.nome}`, `Parcela ${r.num}: ${fmt(r.parcela)} — ${r.venc.toLocaleDateString('pt-BR')}`, 'alerta-orange');
+        alertasEl.appendChild(a);
+      }
+    });
+    // VIP - contrato quitado
+    const todas = rows.every(r => r.pago);
+    if (todas && !c.vipNotificado) {
+      c.vipNotificado = true;
+      bip('vip');
+      const a = criarAlerta(`⭐ VIP — ${c.nome} quitou o contrato!`, `Parabéns! Todas as ${c.prazo} parcelas foram pagas.`, 'alerta-gold');
+      alertasEl.appendChild(a);
+      notificar('Cliente VIP! 🎉', `${c.nome} quitou todas as parcelas!`, 'vip');
+    }
+  });
+}
+
+function criarAlerta(titulo, desc, cls) {
+  const div = document.createElement('div');
+  div.className = `alerta ${cls}`;
+  div.innerHTML = `<div><div style="font-weight:700;font-size:13px;">${titulo}</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">${desc}</div></div>`;
+  return div;
+}
+
+// ══════════════════════════════════
+// TABS
+// ══════════════════════════════════
+function goTab(tab) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.btab').forEach(b=>b.classList.remove('active'));
+  const tabs = ['sim','par','sol','cli'];
+  const idx = tabs.indexOf(tab);
+  document.getElementById('page-'+tab).classList.add('active');
+  document.querySelectorAll('.btab')[idx].classList.add('active');
+  if (tab==='par') renderAlertas();
+  if (tab==='cli') renderClientes();
+}
+
+// ══════════════════════════════════
+// CLIENTE CARD (simulador)
+// ══════════════════════════════════
+function atualizarCC() {
+  const n = document.getElementById('cNome').value.trim();
+  const c = document.getElementById('cCpf').value.trim();
+  if (n.length > 2) {
+    document.getElementById('cliCard').style.display='flex';
+    document.getElementById('cliAva').textContent = n[0].toUpperCase();
+    document.getElementById('cliN').textContent = n;
+    document.getElementById('cliC').textContent = c || 'CPF não informado';
+  } else {
+    document.getElementById('cliCard').style.display='none';
+  }
+}
+
+// ══════════════════════════════════
+// SIMULADOR
+// ══════════════════════════════════
+function simular() {
+  simV = parseFloat(document.getElementById('rV').value)||5000;
+  simP = parseInt(document.getElementById('rP').value)||12;
+  const tx = parseFloat(document.getElementById('rT').value);
+  simT = (isNaN(tx)||tx<=0) ? 0.025 : tx/100;
+  document.getElementById('lblV').textContent = fmt(simV);
+  document.getElementById('lblP').textContent = simP+' meses';
+  const parc = calcParcela(simV,simP,simT);
+  const total = parc*simP;
+  const juros = total-simV;
+  const cet = (Math.pow(1+simT,12)-1)*100;
+  document.getElementById('rParcela').textContent = fmt(parc);
+  document.getElementById('rTotal').textContent = fmt(total);
+  document.getElementById('rJuros').textContent = fmt(juros);
+  document.getElementById('rCet').textContent = cet.toFixed(1)+'% a.a.';
+  drawChart();
+}
+
+function calcParcela(pv,n,i) {
+  if (i===0) return pv/n;
+  return pv*(i*Math.pow(1+i,n))/(Math.pow(1+i,n)-1);
+}
+
+function gerarAmort(pv,n,i,dataBase) {
+  const parc = calcParcela(pv,n,i);
+  let saldo = pv;
+  const base = dataBase ? new Date(dataBase) : new Date();
+  return Array.from({length:n},(_,k)=>{
+    const j = saldo*i;
+    const a = parc-j;
+    saldo = Math.max(0,saldo-a);
+    const venc = new Date(base);
+    venc.setMonth(venc.getMonth()+k+1);
+    return {num:k+1,venc,juros:j,amort:a,parcela:parc,saldo,pago:false};
+  });
+}
+
+function drawChart() {
+  const can = document.getElementById('chart');
+  const ctx = can.getContext('2d');
+  const W = can.parentElement.offsetWidth-40;
+  can.width=W; can.height=140;
+  ctx.clearRect(0,0,W,140);
+  const rows = gerarAmort(simV,simP,simT);
+  const pL=50,pR=12,pT=8,pB=26;
+  const gW=W-pL-pR, gH=140-pT-pB;
+  ctx.strokeStyle='#1e2a42';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pT+(gH/4)*i;ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(W-pR,y);ctx.stroke();ctx.fillStyle='#6b7ea3';ctx.font='10px DM Sans';ctx.fillText(fmtK(simV*(1-i/4)),0,y+4);}
+  ctx.beginPath();
+  rows.forEach((r,i)=>{const x=pL+(i/(rows.length-1||1))*gW;const y=pT+(1-(r.saldo/simV))*gH;i===0?ctx.moveTo(x,pT):ctx.lineTo(x,y);});
+  ctx.strokeStyle='#c9a84c';ctx.lineWidth=2.5;ctx.stroke();
+  const g=ctx.createLinearGradient(0,pT,0,pT+gH);g.addColorStop(0,'rgba(201,168,76,.25)');g.addColorStop(1,'rgba(201,168,76,0)');
+  ctx.lineTo(W-pR,pT+gH);ctx.lineTo(pL,pT+gH);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.fillStyle='#6b7ea3';ctx.font='10px DM Sans';
+  [1,Math.round(simP/2),simP].forEach(m=>{const x=pL+((m-1)/(rows.length-1||1))*gW;ctx.fillText(m+'m',x-8,140-8);});
+}
+
+function fmtK(v){return v>=1000?'R$'+(v/1000).toFixed(0)+'k':'R$'+v.toFixed(0);}
+
+// ══════════════════════════════════
+// CONTRATO / PROPOSTA
+// ══════════════════════════════════
+function abrirContrato() {
+  const nome = document.getElementById('cNome').value||'____________________________________________';
+  const cpf  = document.getElementById('cCpf').value||'___.___.___-__';
+  gerarContratoHTML(nome, cpf, simV, simP, simT, calcParcela(simV,simP,simT));
+  document.getElementById('modalContrato').classList.add('show');
+}
+
+function gerarContratoHTML(nome, cpf, valor, prazo, taxa, parcela) {
+  const total = parcela*prazo;
+  const juros = total-valor;
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  document.getElementById('contratoHTML').innerHTML = `
+    <h2>CRÉDITO PESSOAL</h2>
+    <div class="csub">Izaque Froes — Proposta de Crédito Pessoal · ${hoje}</div>
+    <p style="margin-bottom:12px;font-size:12px;color:#555;">Este documento constitui uma proposta de crédito pessoal, sujeita à aprovação e assinatura das partes.</p>
+    <table>
+      <tr><td>Nome completo</td><td><strong>${nome}</strong></td></tr>
+      <tr><td>CPF</td><td>${cpf}</td></tr>
+      <tr><td>Valor liberado</td><td><strong style="color:#8a6a20;font-size:15px;">R$ ${valor.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')}</strong></td></tr>
+      <tr><td>Quantidade de parcelas</td><td><strong>${prazo}x (${prazo} meses)</strong></td></tr>
+      <tr><td>Valor de cada parcela</td><td><strong style="color:#c0392b;">R$ ${parcela.toFixed(2).replace('.',',')}</strong></td></tr>
+      <tr><td>Taxa de juros mensal</td><td>${(taxa*100).toFixed(2)}% a.m.</td></tr>
+      <tr><td>Total de juros</td><td>R$ ${juros.toFixed(2).replace('.',',')}</td></tr>
+      <tr><td>Total a pagar</td><td>R$ ${total.toFixed(2).replace('.',',')}</td></tr>
+      <tr><td>Data da proposta</td><td>${hoje}</td></tr>
+    </table>
+    <div class="clausulas">
+      <p><strong>CLÁUSULAS:</strong></p>
+      <p>1. O cliente compromete-se a efetuar o pagamento das parcelas nas datas acordadas.</p>
+      <p>2. O não pagamento na data de vencimento implicará em encargos de mora de 2% ao mês.</p>
+      <p>3. O crédito será liberado após assinatura deste documento pelas partes.</p>
+      <p>4. Este contrato é regido pelas normas do Código Civil Brasileiro.</p>
+    </div>
+    <div class="assinatura-area">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+        <div style="flex:1;min-width:200px;">
+          <div class="assinatura-linha"></div>
+          <div class="assinatura-label"><strong>${nome}</strong><br>CPF: ${cpf}<br><em>Contratante</em></div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div class="assinatura-linha"></div>
+          <div class="assinatura-label"><strong>Izaque Froes</strong><br>Crédito Pessoal<br><em>Contratado</em></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:20px;font-size:11px;color:#999;">
+        Data: _____ / _____ / _________ &nbsp;&nbsp; Local: _______________________________
+      </div>
+    </div>
+  `;
+  // Guarda para compartilhar
+  window._contratoAtual = {nome,cpf,valor,prazo,taxa,parcela};
+}
+
+function imprimirContrato() {
+  const conteudo = document.getElementById('contratoHTML').innerHTML;
+  const w = window.open('','_blank');
+  w.document.write(`<html><head><title>Contrato</title><style>
+    body{font-family:Arial,sans-serif;padding:32px;color:#000;}
+    h2{text-align:center;color:#8a6a20;}
+    .csub{text-align:center;font-size:12px;color:#666;border-bottom:2px solid #c9a84c;padding-bottom:10px;margin-bottom:16px;}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+    td{padding:7px 10px;border:1px solid #ddd;font-size:13px;}
+    td:first-child{font-weight:bold;background:#fafafa;width:45%;}
+    .clausulas{font-size:12px;color:#444;}
+    .assinatura-area{margin-top:24px;padding-top:20px;border-top:2px dashed #ccc;}
+    .assinatura-linha{border-bottom:1px solid #000;width:70%;margin:32px auto 6px;}
+    .assinatura-label{text-align:center;font-size:12px;color:#555;}
+    @media print{button{display:none!important;}}
+  </style></head><body>${conteudo}</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+
+async function compartilharContrato() {
+  const c = window._contratoAtual;
+  if (!c) return;
+  const texto = `📄 *PROPOSTA DE CRÉDITO PESSOAL*\n*Crédito Pessoal Izaque Froes*\n\n👤 *Cliente:* ${c.nome}\n🪪 *CPF:* ${c.cpf}\n💰 *Valor liberado:* ${fmt(c.valor)}\n📅 *Parcelas:* ${c.prazo}x de ${fmt(c.parcela)}\n📊 *Taxa:* ${(c.taxa*100).toFixed(2)}% a.m.\n💵 *Total a pagar:* ${fmt(c.parcela*c.prazo)}\n\n✍️ Contrato sujeito à assinatura.\n\n_Crédito Pessoal Izaque Froes_`;
+  if (navigator.share) {
+    try { await navigator.share({title:'Proposta de Crédito',text:texto}); }
+    catch(e) {}
+  } else {
+    await navigator.clipboard.writeText(texto);
+    showToast('📋 Proposta copiada para compartilhar!','ok');
+  }
+}
+
+function fecharModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// ══════════════════════════════════
+// PARCELAS
+// ══════════════════════════════════
+function renderAlertas() { verificarAlertas(); }
+
+function buscarCliente() {
+  const q = document.getElementById('busca').value.toLowerCase().trim();
+  const lista = document.getElementById('listaBusca');
+  lista.innerHTML='';
+  if (!q) { document.getElementById('parConteudo').style.display='none'; return; }
+  const encontrados = clientes.filter(c=>c.nome.toLowerCase().includes(q)||c.cpf.replace(/\D/g,'').includes(q.replace(/\D/g,'')));
+  if (encontrados.length===0) { lista.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px;">Nenhum cliente encontrado.</div>'; return; }
+  encontrados.forEach(c=>{
+    const div=document.createElement('div');
+    div.style.cssText='padding:12px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:10px;';
+    div.innerHTML=`<strong>${c.nome}</strong><br><span style="font-size:12px;color:var(--muted);">${c.cpf} · ${fmt(c.valor)} · ${c.prazo}x</span>`;
+    div.onclick=()=>selecionarCliente(c);
+    lista.appendChild(div);
+  });
+}
+
+function selecionarCliente(c) {
+  clienteSelecionado = c;
+  document.getElementById('busca').value = c.nome;
+  document.getElementById('listaBusca').innerHTML='';
+  document.getElementById('parConteudo').style.display='block';
+
+  const hoje = new Date();
+  const pagas = c.rows.filter(r=>r.pago).length;
+  const faltam = c.rows.length - pagas;
+  const pct = Math.round((pagas/c.rows.length)*100);
+
+  document.getElementById('parTitulo').innerHTML = `${c.nome} ${c.vipNotificado?'<span class="vip-badge">⭐ VIP</span>':''}`;
+  document.getElementById('parValor').textContent = fmt(c.valor);
+  document.getElementById('parPagas').textContent = pagas;
+  document.getElementById('parFaltam').textContent = faltam;
+  document.getElementById('parPct').textContent = pct+'%';
+  document.getElementById('pbF').style.width = pct+'%';
+
+  // próximo vencimento
+  const prox = c.rows.find(r=>!r.pago && (r.venc - hoje) > -86400000);
+  document.getElementById('parProx').textContent = prox ? prox.venc.toLocaleDateString('pt-BR') : '✅ Quitado';
+
+  // lista
+  const lista = document.getElementById('listaParc');
+  lista.innerHTML='';
+  c.rows.forEach(r=>{
+    const div = document.createElement('div');
+    const diff = Math.floor((r.venc - hoje)/86400000);
+    let stClass, stLabel;
+    if (r.pago)       { stClass='s-pago';      stLabel='✅ Pago'; }
+    else if (diff<0)  { stClass='s-atrasado';  stLabel='⚠️ Atrasado'; }
+    else if (diff<=2) { stClass='s-vencer';    stLabel='🔔 Vence em breve'; }
+    else              { stClass='s-futuro';    stLabel='Futuro'; }
+
+    div.className = 'pi' + (r.pago?' pago-row':'');
+    div.innerHTML = `
+      <div class="pnum" style="color:${r.pago?'var(--green)':'var(--gold)'}">${r.num}</div>
+      <div class="pinfo">
+        <div class="pval">${fmt(r.parcela)}</div>
+        <div class="pdate">${r.venc.toLocaleDateString('pt-BR')} · Saldo: ${fmt(r.saldo)}</div>
+      </div>
+      <span class="pstatus ${stClass}">${stLabel}</span>
+      ${!r.pago ? `<button class="pbaixa" onclick="darBaixa('${c.cpf}',${r.num})">Dar baixa</button>` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function darBaixa(cpf, numParc) {
+  const c = clientes.find(x=>x.cpf===cpf);
+  if (!c) return;
+  const r = c.rows.find(x=>x.num===numParc);
+  if (!r || r.pago) return;
+  r.pago = true;
+  r.dataPagamento = new Date();
+  bip('baixa');
+  showToast(`✅ Parcela ${numParc} de ${c.nome} marcada como paga!`,'ok');
+  selecionarCliente(c);
+  verificarAlertas();
+  // checa VIP
+  const todas = c.rows.every(x=>x.pago);
+  if (todas && !c.vipNotificado) {
+    c.vipNotificado = true;
+    setTimeout(()=>{
+      bip('vip');
+      showToast(`⭐ ${c.nome} quitou o contrato! VIP!`,'vip');
+    },600);
+  }
+}
+
+// ══════════════════════════════════
+// SOLICITAÇÃO
+// ══════════════════════════════════
+let solStep=1;
+
+function solNext(step) {
+  if (step===2){
+    const n=document.getElementById('sN').value.trim();
+    const c=document.getElementById('sC').value;
+    if(n.length<3){showToast('❌ Informe o nome completo','err');return;}
+    if(c.length<14){showToast('❌ CPF inválido','err');return;}
+  }
+  if (step===3){
+    const r=document.getElementById('sR').value;
+    const v=document.getElementById('sVal').value;
+    if(!r||!v){showToast('❌ Preencha renda e valor','err');return;}
+    const taxa=parseFloat(document.getElementById('sTx').value)/100;
+    const prazo=parseInt(document.getElementById('sPr').value);
+    const valor=parseMoeda(document.getElementById('sVal').value);
+    const parc=calcParcela(valor,prazo,taxa);
+    document.getElementById('revisao').innerHTML=`
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        ${[['Nome',document.getElementById('sN').value],['CPF',document.getElementById('sC').value],
+           ['Telefone',document.getElementById('sT').value||'—'],['E-mail',document.getElementById('sE').value||'—'],
+           ['Renda',document.getElementById('sR').value],['Vínculo',document.getElementById('sV').value],
+           ['Valor',document.getElementById('sVal').value],['Prazo',prazo+' meses'],
+           ['Taxa',document.getElementById('sTx').value+'% a.m.'],['Parcela estimada',fmt(parc)],
+           ['Finalidade',document.getElementById('sFin').value],['Banco',document.getElementById('sBanco').value||'—'],
+        ].map(([k,v])=>`<tr><td style="color:var(--muted);padding:7px 4px;width:45%;font-size:12px;">${k}</td><td style="font-weight:500;padding:7px 4px;font-size:13px;">${v}</td></tr>`).join('')}
+      </table>`;
+  }
+  solStep=step;
+  [1,2,3].forEach(s=>{document.getElementById('st'+s).style.display=s===step?'block':'none';});
+  [1,2,3].forEach(s=>{
+    const el=document.getElementById('sc'+s);
+    el.style.background=s<=step?'var(--gold)':'var(--border)';
+    el.style.color=s<=step?'#07090f':'var(--muted)';
+  });
+}
+
+function registrar() {
+  if(!document.getElementById('sAc').checked){showToast('❌ Confirme os dados','err');return;}
+  const taxa=parseFloat(document.getElementById('sTx').value)/100;
+  const prazo=parseInt(document.getElementById('sPr').value);
+  const valor=parseMoeda(document.getElementById('sVal').value)||5000;
+  const nome=document.getElementById('sN').value;
+  const cpf=document.getElementById('sC').value;
+  const rows=gerarAmort(valor,prazo,taxa);
+  clientes.push({nome,cpf,valor,prazo,taxa,rows,data:new Date(),vipNotificado:false,
+    tel:document.getElementById('sT').value,email:document.getElementById('sE').value});
+  bip('ok');
+  document.getElementById('solOK').style.display='block';
+  document.getElementById('solOKdesc').textContent=`${nome} · ${fmt(valor)} · ${prazo}x de ${fmt(calcParcela(valor,prazo,taxa))}`;
+  showToast('✅ Cliente '+nome+' registrado!','ok');
+  // pré-preenche simulador
+  document.getElementById('cNome').value=nome;
+  document.getElementById('cCpf').value=cpf;
+  atualizarCC();
+}
+
+// ══════════════════════════════════
+// CLIENTES PAGE
+// ══════════════════════════════════
+function renderClientes() {
+  const hoje=new Date();
+  const atrasados=clientes.filter(c=>c.rows.some(r=>!r.pago&&r.venc<hoje));
+  const vips=clientes.filter(c=>c.vipNotificado);
+  document.getElementById('dcT').textContent=clientes.length;
+  document.getElementById('dcA').textContent=atrasados.length;
+  document.getElementById('dcV').textContent=vips.length;
+  document.getElementById('semCli').style.display=clientes.length?'none':'block';
+  const lista=document.getElementById('listaClientes');
+  lista.innerHTML='';
+  clientes.forEach(c=>{
+    const pagas=c.rows.filter(r=>r.pago).length;
+    const atrasado=c.rows.some(r=>!r.pago&&r.venc<hoje);
+    const div=document.createElement('div');
+    div.className='cli-item';
+    div.style.cursor='pointer';
+    div.innerHTML=`
+      <div style="flex:1;">
+        <div class="cname">${c.nome} ${c.vipNotificado?'<span class="vip-badge">⭐VIP</span>':''}</div>
+        <div class="cinfo">${c.cpf} · ${pagas}/${c.rows.length} parcelas pagas</div>
+      </div>
+      <div>
+        <div class="cval">${fmt(c.valor)}</div>
+        <div class="cstatus ${atrasado?'s-atrasado':c.vipNotificado?'s-pago':'s-futuro'}">${atrasado?'⚠️ Atrasado':c.vipNotificado?'✅ VIP':'Em dia'}</div>
+      </div>`;
+    div.onclick=()=>abrirModalCliente(c);
+    lista.appendChild(div);
+  });
+}
+
+function abrirModalCliente(c) {
+  const parc=calcParcela(c.valor,c.prazo,c.taxa);
+  const pagas=c.rows.filter(r=>r.pago).length;
+  document.getElementById('modalClienteConteudo').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6a20);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#07090f;margin:0 auto 10px;">${c.nome[0].toUpperCase()}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">${c.nome} ${c.vipNotificado?'<span class="vip-badge">⭐VIP</span>':''}</div>
+      <div style="font-size:12px;color:var(--muted);">${c.cpf}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:10px;color:var(--muted);margin-bottom:4px;">VALOR</div><div style="color:var(--gold);font-weight:700;font-size:16px;">${fmt(c.valor)}</div></div>
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:10px;color:var(--muted);margin-bottom:4px;">PARCELA</div><div style="color:var(--orange);font-weight:700;font-size:16px;">${fmt(parc)}</div></div>
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:10px;color:var(--muted);margin-bottom:4px;">PAGAS</div><div style="color:var(--green);font-weight:700;font-size:16px;">${pagas}/${c.rows.length}</div></div>
+      <div class="card" style="text-align:center;padding:14px;"><div style="font-size:10px;color:var(--muted);margin-bottom:4px;">FALTAM</div><div style="color:var(--orange);font-weight:700;font-size:16px;">${c.rows.length-pagas}</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="irParaParcelas('${c.cpf}')">Ver parcelas</button>
+    <button class="btn btn-out" style="width:100%;margin-top:10px;" onclick="abrirContratoCliente('${c.cpf}')">📄 Ver contrato</button>
+  `;
+  document.getElementById('modalCliente').classList.add('show');
+}
+
+function irParaParcelas(cpf) {
+  const c=clientes.find(x=>x.cpf===cpf);
+  fecharModal('modalCliente');
+  goTab('par');
+  setTimeout(()=>{ document.getElementById('busca').value=c.nome; buscarCliente(); selecionarCliente(c); },200);
+}
+
+function abrirContratoCliente(cpf) {
+  const c=clientes.find(x=>x.cpf===cpf);
+  if(!c) return;
+  fecharModal('modalCliente');
+  gerarContratoHTML(c.nome,c.cpf,c.valor,c.prazo,c.taxa,calcParcela(c.valor,c.prazo,c.taxa));
+  document.getElementById('modalContrato').classList.add('show');
+}
+
+// ══════════════════════════════════
+// MÁSCARAS
+// ══════════════════════════════════
+function mascaraCPF(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');el.value=v;}
+function mascaraTel(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2');el.value=v;}
+function mascaraMoeda(el){let v=el.value.replace(/\D/g,'');if(!v){el.value='';return;}v=(parseInt(v)/100).toFixed(2);el.value='R$ '+v.replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+function parseMoeda(s){return parseFloat(s.replace(/[^\d,]/g,'').replace(',','.'))||0;}
+function fmt(v){return 'R$ '+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+
+// ══════════════════════════════════
+// TOAST
+// ══════════════════════════════════
+function showToast(msg, tipo='') {
+  clearTimeout(toastTimer);
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+(tipo==='err'?'err':tipo==='ok'?'ok':tipo==='warn'?'warn':tipo==='vip'?'vip':'')+' show';
+  toastTimer=setTimeout(()=>t.className='toast',3500);
+}
+
+// ══════════════════════════════════
+// FECHAR MODAIS (fora)
+// ══════════════════════════════════
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+});
+
+// INIT
+simular();
+window.addEventListener('resize',()=>{ if(document.getElementById('page-sim').classList.contains('active')) simular(); });
+</script>
+</body>
+</html>
